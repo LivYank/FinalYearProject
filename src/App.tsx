@@ -8,6 +8,7 @@ import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import ASLTranslator from "./pages/ASLTranslator";
+import Settings from "./pages/Settings";  // ✅ ADD THIS
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/signup" element={<Signup />} />
           <Route path="/home" element={<Home />} />
           <Route path="/asl-translator" element={<ASLTranslator />} />
+          <Route path="/settings" element={<Settings />} />   {/* ✅ ADD THIS */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

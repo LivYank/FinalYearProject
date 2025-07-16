@@ -2,49 +2,45 @@
 import { useState, useRef } from 'react';
 import { Upload, Image, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 
-interface ImageUploadProps {
+interface Props {
   gestureRecognizer: any;
   onDetection: (sign: string, confidence: number) => void;
 }
 
-const ImageUpload = ({ gestureRecognizer, onDetection }: ImageUploadProps) => {
+const ImageUpload = ({ gestureRecognizer, onDetection }: Props) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
+      reader.onload = () => {
+        setSelectedImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const processImage = async () => {
+  const processImage = () => {
     if (!gestureRecognizer || !imageRef.current) return;
 
     setIsProcessing(true);
     try {
       const results = gestureRecognizer.recognize(imageRef.current);
-      console.log('Image recognition results:', results);
-      
-      if (results.gestures && results.gestures.length > 0) {
+      if (results.gestures?.length) {
         const gesture = results.gestures[0][0];
         onDetection(gesture.categoryName, Math.round(gesture.score * 100));
       } else {
         const handDetected = results.landmarks && results.landmarks.length > 0;
-        onDetection(handDetected ? 'Hand detected - no sign recognized' : 'No sign detected', 0);
+        onDetection(handDetected ? 'Hand detected - no sign' : 'No sign', 0);
       }
     } catch (err) {
-      console.error('Error processing image:', err);
-      onDetection('Error processing image', 0);
+      console.error(err);
     } finally {
       setIsProcessing(false);
     }
@@ -53,55 +49,33 @@ const ImageUpload = ({ gestureRecognizer, onDetection }: ImageUploadProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Upload className="h-5 w-5" />
+        <CardTitle>
+          <Upload className="h-5 w-5 inline mr-2" />
           Upload Image
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <div>
-            <Input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileSelect}
-              className="cursor-pointer"
-            />
-          </div>
-          
-          {selectedImage && (
-            <div className="space-y-4">
-              <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
-                <img
-                  ref={imageRef}
-                  src={selectedImage}
-                  alt="Selected image"
-                  className="w-full h-full object-contain"
-                  crossOrigin="anonymous"
-                />
-              </div>
-              
-              <Button
-                onClick={processImage}
-                disabled={isProcessing || !gestureRecognizer}
-                className="w-full"
-              >
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing Image...
-                  </>
-                ) : (
-                  <>
-                    <Image className="mr-2 h-4 w-4" />
-                    Detect Sign in Image
-                  </>
-                )}
-              </Button>
+        <Input type="file" accept="image/*" onChange={handleFile} />
+        {selectedImage && (
+          <>
+            <div className="mt-4">
+              <img ref={imageRef} src={selectedImage} alt="Uploaded" className="w-full rounded" />
             </div>
-          )}
-        </div>
+            <Button onClick={processImage} disabled={isProcessing || !gestureRecognizer} className="mt-4">
+              {isProcessing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <Image className="mr-2 h-4 w-4" />
+                  Detect Sign
+                </>
+              )}
+            </Button>
+          </>
+        )}
       </CardContent>
     </Card>
   );
