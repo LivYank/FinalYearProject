@@ -1,83 +1,59 @@
+import { useRef, useState, useEffect } from "react";
 
-import { useState, useRef } from 'react';
-import { Upload, Image, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-
-interface Props {
+interface ImageUploadProps {
   gestureRecognizer: any;
-  onDetection: (sign: string, confidence: number) => void;
+  onDetection: (sign: string, conf: number) => void;
 }
 
-const ImageUpload = ({ gestureRecognizer, onDetection }: Props) => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+const ImageUpload = ({ gestureRecognizer, onDetection }: ImageUploadProps) => {
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+  const [imageBitmap, setImageBitmap] = useState<ImageBitmap | null>(null);
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setSelectedImage(reader.result as string);
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const result = reader.result as string;
+      setImageSrc(result);
+
+      // Load image into an HTMLImageElement
+      const img = new Image();
+      img.src = result;
+
+      img.onload = async () => {
+        const bitmap = await createImageBitmap(img);
+        setImageBitmap(bitmap);
       };
-      reader.readAsDataURL(file);
-    }
+    };
+    reader.readAsDataURL(file);
   };
 
-  const processImage = () => {
-    if (!gestureRecognizer || !imageRef.current) return;
+  const handleDetect = async () => {
+    if (!gestureRecognizer || !imageBitmap) return;
 
-    setIsProcessing(true);
-    try {
-      const results = gestureRecognizer.recognize(imageRef.current);
-      if (results.gestures?.length) {
-        const gesture = results.gestures[0][0];
-        onDetection(gesture.categoryName, Math.round(gesture.score * 100));
-      } else {
-        const handDetected = results.landmarks && results.landmarks.length > 0;
-        onDetection(handDetected ? 'Hand detected - no sign' : 'No sign', 0);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsProcessing(false);
+    const results = await gestureRecognizer.recognize(imageBitmap, performance.now());
+
+    if (results.gestures && results.gestures.length > 0) {
+      const gesture = results.gestures[0][0];
+      onDetection(gesture.categoryName, Math.round(gesture.score * 100));
     }
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <Upload className="h-5 w-5 inline mr-2" />
-          Upload Image
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Input type="file" accept="image/*" onChange={handleFile} />
-        {selectedImage && (
-          <>
-            <div className="mt-4">
-              <img ref={imageRef} src={selectedImage} alt="Uploaded" className="w-full rounded" />
-            </div>
-            <Button onClick={processImage} disabled={isProcessing || !gestureRecognizer} className="mt-4">
-              {isProcessing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <Image className="mr-2 h-4 w-4" />
-                  Detect Sign
-                </>
-              )}
-            </Button>
-          </>
-        )}
-      </CardContent>
-    </Card>
+    <div>
+      <input type="file" accept="image/*" onChange={handleFileChange} />
+      {imageSrc && (
+        <>
+          <img ref={imageRef} src={imageSrc} alt="Uploaded" className="w-full rounded-lg" />
+          <button onClick={handleDetect} className="mt-2 px-4 py-1 bg-blue-600 text-white rounded">
+            Detect
+          </button>
+        </>
+      )}
+    </div>
   );
 };
 

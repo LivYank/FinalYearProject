@@ -2,13 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Landing from "./pages/Landing";
-import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import ASLTranslator from "./pages/ASLTranslator";
-import Settings from "./pages/Settings";  // ✅ ADD THIS
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,10 +20,9 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/home" element={<Home />} />
           <Route path="/asl-translator" element={<ASLTranslator />} />
-          <Route path="/settings" element={<Settings />} />   {/* ✅ ADD THIS */}
+          <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
