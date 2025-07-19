@@ -10,11 +10,6 @@ const Settings: React.FC = () => {
     () => localStorage.getItem("notifications") !== "off"
   );
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/signup", { replace: true });
-  };
-
   const toggleTheme = () => {
     const newTheme = !dark ? "dark" : "light";
     setDark(!dark);
@@ -33,13 +28,16 @@ const Settings: React.FC = () => {
     localStorage.setItem("notifications", newStatus);
   };
 
-  const handleDeleteAccount = () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete your account? This cannot be undone."
+  const handleResetSettings = () => {
+    const confirmReset = window.confirm(
+      "This will reset your theme and notification preferences. Continue?"
     );
-    if (confirmDelete) {
-      localStorage.clear();
-      navigate("/signup", { replace: true });
+    if (confirmReset) {
+      localStorage.removeItem("theme");
+      localStorage.removeItem("notifications");
+      setDark(false);
+      setNotifications(true);
+      document.documentElement.classList.remove("dark");
     }
   };
 
@@ -49,13 +47,6 @@ const Settings: React.FC = () => {
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">
           Settings
         </h2>
-
-        <button
-          onClick={handleLogout}
-          className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition mb-4"
-        >
-          Logout
-        </button>
 
         <button
           onClick={toggleTheme}
@@ -92,10 +83,10 @@ const Settings: React.FC = () => {
         </button>
 
         <button
-          onClick={handleDeleteAccount}
-          className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition mb-4"
+          onClick={handleResetSettings}
+          className="w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 transition mb-4"
         >
-          Delete Account
+          Reset App Settings
         </button>
 
         <button

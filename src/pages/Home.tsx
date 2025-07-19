@@ -15,6 +15,8 @@ const Home = () => {
   const [detectedSign, setDetectedSign] = useState<string>("");
   const [confidence, setConfidence] = useState<number>(0);
   const [activeTab, setActiveTab] = useState("camera");
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     const loadModel = async () => {
@@ -103,9 +105,71 @@ const Home = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="upload" className="w-full flex justify-center">
-          <p className="text-muted-foreground mt-8">📸 Upload Image — Coming Soon</p>
-        </TabsContent>
+         <TabsContent value="upload" className="w-full flex flex-col items-center px-4 pt-6">
+  <h2 className="text-lg font-semibold mb-4">Upload Image</h2>
+
+  <input
+    type="file"
+    accept="image/*"
+    onChange={(e) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const previewUrl = URL.createObjectURL(file);
+        setDetectedSign(""); // clear old result
+        setConfidence(0);
+        setSelectedImage(previewUrl);
+        setImageFile(file);
+      }
+    }}
+    className="mb-4"
+  />
+
+  {selectedImage && (
+    <img
+      src={selectedImage}
+      alt="Uploaded preview"
+      className="w-64 h-64 object-cover rounded-xl mb-4 border"
+    />
+  )}
+
+  <Button
+    onClick={async () => {
+      if (!gestureRecognizer || !selectedImage) return;
+
+      const image = new Image();
+      image.src = selectedImage;
+
+      image.onload = async () => {
+        try {
+          const result = await gestureRecognizer.recognize(image);
+
+          if (result.gestures && result.gestures.length > 0 && result.gestures[0].length > 0) {
+            const gesture = result.gestures[0][0];
+            setDetectedSign(gesture.categoryName);
+            setConfidence(Math.round(gesture.score * 100));
+          } else {
+            setDetectedSign("No clear sign detected");
+            setConfidence(0);
+          }
+        } catch (err) {
+          console.error("Recognition error:", err);
+          setDetectedSign("Error occurred during prediction");
+          setConfidence(0);
+        }
+      };
+    }}
+    className="bg-red-600 text-white px-6 py-2 rounded-lg text-sm shadow"
+  >
+    Predict Alphabet
+  </Button>
+
+  {detectedSign && (
+    <div className="mt-4 text-center">
+      <p className="font-semibold text-lg">Detected Sign: {detectedSign}</p>
+      <p className="text-sm text-muted-foreground">Confidence: {confidence}%</p>
+    </div>
+  )}
+</TabsContent>
 
         <TabsContent value="info" className="w-full flex justify-center">
           <p className="text-muted-foreground mt-8">ℹ️ GSL Algorithm Info Coming Soon</p>

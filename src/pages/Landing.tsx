@@ -7,7 +7,7 @@ const Landing: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       const token = localStorage.getItem("token");
-      navigate(token ? "/home" : "/signup", { replace: true });
+      navigate("/home" , { replace: true });
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -33,3 +33,5 @@ const Landing: React.FC = () => {
 };
 
 export default Landing;
+
+  
