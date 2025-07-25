@@ -1,4 +1,4 @@
-import dictionary from "@/assets/dictionary.json";
+import dictionary from '../assets/dictionary.json';
 
 const STOP_WORDS = ["the", "is", "am", "are", "to", "in", "at", "on", "a", "an", "will"];
 const TYPE_ORDER = ["time", "object", "noun", "verb"];
