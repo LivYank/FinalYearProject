@@ -53,7 +53,7 @@ const Home = () => {
           <img src="/logo.png" alt="Logo" className="h-8" />
           <h1 className="text-lg font-bold">iSpeak GhSL</h1>
           <Link to="/settings">
-            <img src="/settings.png" alt="Settings" className="h-6" />
+            <img src="/Settings.png" alt="Settings" className="h-6" />
           </Link>
         </header>
 
@@ -104,5 +104,4 @@ const Home = () => {
 };
 
 export default Home;
-
 

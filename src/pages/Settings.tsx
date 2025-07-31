@@ -72,21 +72,10 @@ const Settings: React.FC = () => {
         </button>
 
         <button
-          onClick={() =>
-            alert(
-              "iSpeak GhSL is an app that helps bridge communication gaps using Ghanaian Sign Language. Contact us for more info!"
-            )
-          }
+          onClick={() => navigate("/about")}
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition mb-4"
-        >
+         >
           About iSpeak GhSL App
-        </button>
-
-        <button
-          onClick={handleResetSettings}
-          className="w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 transition mb-4"
-        >
-          Reset App Settings
         </button>
 
         <button

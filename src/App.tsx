@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import Medical from "./pages/Medical";
 import GSLAlgorithm from "./pages/GSLAlgorithm";
 import ISpeak from "./pages/iSPEAKDataset";
+import About from "./pages/About";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/VideoPage/:id" element={<VideoPageSingle />} />
           <Route path="/gsl-algorithm" element={<GSLAlgorithm />} />
           <Route path="/iSPEAK-Dataset" element={<ISpeak />} />
+          <Route path="/about" element={<About />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
