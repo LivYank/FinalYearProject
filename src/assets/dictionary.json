@@ -1,5 +1,6 @@
 
 {
+  "i": { "sign": "Sign: Place the 'I' hand against your chest", "type": "noun" },
   "boy": { "sign": "Sign: Pull the 'AND' hand from forehead then flat hand at side", "type": "noun" },
   "play": { "sign": "Sign: Move both 'Y' hands side to side", "type": "verb" },
   "football": { "sign": "Sign: Two fists hit together twice", "type": "object" },
@@ -173,7 +174,6 @@
   "social_studies": { "sign": "Sign: Rotate 'S' hand around left index finger while opening into curved hand", "type": "noun" },
   "art": { "sign": "Sign: Draw little finger of 'I' hand down left palm", "type": "noun" },
   "learn": { "sign": "Sign: Place right open hand on left palm and pull up to forehead into 'AND' hand", "type": "verb" },
-  "write": { "sign": "Sign: Swipe modified 'A' hand across left palm", "type": "verb" },
   "calculator": { "sign": "Sign: With left palm facing up, tap left palm with middle finger of right hand a few times", "type": "noun" },
   "language": { "sign": "Sign: With both 'L' hand thumbs facing each other, pull hands away in front of body", "type": "noun" },
   "concept": { "sign": "Sign: Place thumb of right 'C' hand near right temple and twist outward", "type": "noun" },
@@ -247,7 +247,6 @@
   "breathe": { "sign": "Sign: Place both open hands at chest and move back and forth slowly", "type": "verb" },
   "sleep": { "sign": "Sign: Touch all fingers to forehead and thumb to cheek then close into 'AND' hand over eye", "type": "verb/noun" },
   "bathe": { "sign": "Sign: Slide both 'A' hands up and down body alternately", "type": "verb" },
-  "bath": { "sign": "Sign: Slide both 'A' hands up and down body alternately", "type": "noun" },
   "toothbrush": { "sign": "Sign: With right hand in front of mouth, wiggle index finger up and down", "type": "noun" },
   "touch": { "sign": "Sign: Place middle finger on back of left hand", "type": "verb/noun" },
   "smell": { "sign": "Sign: Fan flat hand toward nose", "type": "verb/noun" },
@@ -311,4 +310,5 @@
   "obey": { "sign": "Sign: Place one 'O' hand at forehead and other at chin and open to flat hands at front", "type": "verb" },
   "refuse": { "sign": "Sign: Place 'A' hand at waist with thumb upward and draw arm over right shoulder", "type": "verb" },
   "forget": { "sign": "Sign: Wipe flat hand across forehead and close into 'A' hand", "type": "verb" }
+  
 }
