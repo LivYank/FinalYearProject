@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import MainLayout from "@/components/ui/MainLayout";
-import dictionary from "@/assets/dictionary.json"; 
+import dictionary from "@/assets/dictionary.json";
 import OpenAI from "openai";
 
 const STOP_WORDS = ["the", "is", "am", "are", "to", "in", "at", "on", "a", "an", "will"];
-const TYPE_ORDER = ["object", "noun", "verb", "time"];
+const TYPE_ORDER = ["time", "topic", "comment", "verb"];
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -27,8 +27,20 @@ const GSLAlgorithm = () => {
 
   const classifyWords = (tokens: string[]) => {
     let usedWords = new Set();
-    let types: Record<string, any> = { time: null, object: null, noun: null, verb: null, others: [] };
-    let words: Record<string, any> = { time: null, object: null, noun: null, verb: null, others: [] };
+    let types: Record<string, any> = {
+      time: null,
+      topic: null,
+      comment: null,
+      verb: null,
+      others: []
+    };
+    let words: Record<string, any> = {
+      time: null,
+      topic: null,
+      comment: null,
+      verb: null,
+      others: []
+    };
 
     for (let word of tokens) {
       const entry = (dictionary as any)[word];
@@ -58,21 +70,6 @@ const GSLAlgorithm = () => {
       }
     }
 
-    for (let slot of TYPE_ORDER) {
-      if (!types[slot]) {
-        for (let word of tokens) {
-          if (usedWords.has(word)) continue;
-          const entry = (dictionary as any)[word];
-          if (entry && entry.type.split('/').includes(slot)) {
-            types[slot] = entry.sign;
-            words[slot] = word;
-            usedWords.add(word);
-            break;
-          }
-        }
-      }
-    }
-
     return { types, words };
   };
 
@@ -83,14 +80,26 @@ const GSLAlgorithm = () => {
     const { types, words } = classifyWords(tokens);
 
     const usedSet = new Set();
-    const signs = [types.time, types.object, types.noun, types.verb, ...types.others].filter(sign => {
+    const signs = [
+      types.time,
+      types.topic,
+      types.comment,
+      types.verb,
+      ...types.others
+    ].filter(sign => {
       if (!sign || usedSet.has(sign)) return false;
       usedSet.add(sign);
       return true;
     });
 
     const wordSet = new Set();
-    const wordOrder = [words.time, words.object, words.noun, words.verb, ...words.others].filter(word => {
+    const wordOrder = [
+      words.time,
+      words.topic,
+      words.comment,
+      words.verb,
+      ...words.others
+    ].filter(word => {
       if (!word || wordSet.has(word)) return false;
       wordSet.add(word);
       return true;
@@ -105,19 +114,25 @@ const GSLAlgorithm = () => {
         messages: [
           {
             role: "system",
-            content: `You are a Ghanaian Sign Language (GhSL) translator. Your job is to translate any English sentence into correct GhSL structure.
+            content: `You are a Ghanaian Sign Language (GhSL) translator. Translate any English sentence using these rules:
 
-                      Use this format:
-                    - Use Time → Topic → Comment order
-                    - Remove filler or helper words (like "am", "is", "are", etc.)
-                    - Output the GhSL equivalent in basic English word order used in signs.
+1. Time → Topic → Comment order
+2. Topic-Comment: Topic first, then comment.
+3. Verb Tense: Use base verb, set tense using time indicators at the start.
+4. Negation: Place NOT/NEGATION after verb or item.
+5. WH-Questions: Place WH-word at end or both start/end.
+6. Cause-Effect: State cause before effect.
+7. Chronological Order: Sign events in sequence.
+8. General → Specific: Scene setting.
+9. Description: Adjective before noun.
 
-                      Examples:
-                    - "I am going to school today" → "Today school go I"
-                    - "She is cooking rice" → "Rice cook she"
-                    - "I am sick" → "Sick I"
+Examples:
+- "I went to the library yesterday" → "YESTERDAY LIBRARY I GO"
+- "What is your name?" → "YOUR NAME WHAT"
+- "I don’t have any pets" → "PET HAVE NOT"
 
-                    Now translate the following:`,
+Translate this:
+            `,
           },
           {
             role: "user",
@@ -135,31 +150,31 @@ const GSLAlgorithm = () => {
 
   return (
     <MainLayout>
-      <div className="p-6 max-w-3xl mx-auto">
-        <h1 className="text-2xl font-bold text-blue-700 mb-4">Ghanaian Sign Language (GhSL) Translator</h1>
+      <div className="p-6 max-w-3xl mx-auto bg-[#fffbe6] rounded-xl border border-yellow-600 shadow-md">
+        <h1 className="text-3xl font-bold text-red-600 mb-4">🇬🇭 Ghanaian Sign Language (GhSL) Translator</h1>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Enter an English sentence..."
-          className="w-full p-2 border border-gray-300 rounded mb-4"
+          className="w-full p-3 border-2 border-green-600 rounded mb-4 focus:outline-none focus:ring focus:ring-green-400"
         />
         <button
           onClick={handleTranslate}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
         >
           Translate
         </button>
 
         {orderedWords.length > 0 && (
           <div className="mt-6">
-            <h2 className="text-xl font-semibold">Manual Translation</h2>
-            <p className="mt-2">
-              <strong>Translated Word Order:</strong> {orderedWords.join(" → ")}
+            <h2 className="text-xl font-semibold text-green-700">Manual Translation</h2>
+            <p className="mt-2 text-black">
+              <strong>Word Order:</strong> {orderedWords.join(" → ")}
             </p>
             <div className="mt-4">
               <h3 className="font-semibold">Sign Instructions:</h3>
-              <ol className="list-decimal ml-5">
+              <ol className="list-decimal ml-5 text-black">
                 {orderedSigns.map((sign, idx) => (
                   <li key={idx}>{sign}</li>
                 ))}
@@ -170,8 +185,10 @@ const GSLAlgorithm = () => {
 
         {gptTranslation && (
           <div className="mt-6">
-            <h2 className="text-xl font-semibold">GPT-Assisted Translation</h2>
-            <p className="bg-gray-100 p-3 rounded text-sm">{gptTranslation}</p>
+            <h2 className="text-xl font-semibold text-yellow-700">GPT-Assisted Translation</h2>
+            <p className="bg-yellow-100 p-3 rounded text-sm text-black">
+              {gptTranslation}
+            </p>
           </div>
         )}
       </div>
