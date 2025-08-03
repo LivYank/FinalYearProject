@@ -1,6 +1,6 @@
-// netlify/functions/openai-proxy.js
 
-const fetch = require('node-fetch');
+
+import fetch from 'node-fetch';
 
 exports.handler = async (event, context) => {
     // This is where we securely get the key from Netlify
