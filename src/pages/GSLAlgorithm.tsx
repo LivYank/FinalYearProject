@@ -1,15 +1,9 @@
 import React, { useState } from "react";
 import MainLayout from "@/components/ui/MainLayout";
 import dictionary from "@/assets/dictionary.json";
-import OpenAI from "openai";
 
 const STOP_WORDS = ["the", "is", "am", "are", "to", "in", "at", "on", "a", "an", "will"];
 const TYPE_ORDER = ["time", "topic", "comment", "verb"];
-
-const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true,
-});
 
 const GSLAlgorithm = () => {
   const [input, setInput] = useState("");
@@ -109,12 +103,17 @@ const GSLAlgorithm = () => {
     setOrderedWords(wordOrder);
 
     try {
-      const res = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: "system",
-            content: `You are a Ghanaian Sign Language (GhSL) translator. Translate any English sentence using these rules:
+      const response = await fetch("/.netlify/functions/openai-proxy", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "system",
+              content: `You are a Ghanaian Sign Language (GhSL) translator. Translate any English sentence using these rules:
 
 1. Time → Topic → Comment order
 2. Topic-Comment: Topic first, then comment.
@@ -133,14 +132,16 @@ Examples:
 
 Translate this:
             `,
-          },
-          {
-            role: "user",
-            content: input,
-          },
-        ],
+            },
+            {
+              role: "user",
+              content: input,
+            },
+          ],
+        }),
       });
 
+      const res = await response.json();
       setGptTranslation(res.choices[0].message.content || "");
     } catch (error: any) {
       console.error("GPT Error:", error.message);
