@@ -1,49 +1,65 @@
-console.log('Function started for debugging.');
+// netlify/functions/openai-proxy.js
 
 import fetch from 'node-fetch';
 
 exports.handler = async (event, context) => {
-    // This is where we securely get the key from Netlify
-    const OPENAI_API_KEY = process.env.VITE_OPENAI_API_KEY;
+    console.log('Function started for debugging.');
 
-    // This is a safety check to make sure the key is there
-    if (!OPENAI_API_KEY) {
+    if (event.httpMethod !== 'POST') {
+        console.log('Invalid HTTP method.');
         return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'OpenAI API key not configured.' }),
+            statusCode: 405,
+            body: JSON.stringify({ error: 'Method Not Allowed' })
         };
     }
 
     try {
-        // This gets the data sent from your front-end
-        const { prompt } = JSON.parse(event.body);
+        const body = JSON.parse(event.body);
+        const { text } = body;
 
-        // This is the secure call to OpenAI using the hidden key
-        const response = await fetch('https://api.openai.com/v1/completions', {
+        if (!text) {
+            console.log('Missing text in request body.');
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: 'Missing "text" in request body' })
+            };
+        }
+
+        const openAIApiKey = process.env.VITE_OPENAI_API_KEY;
+
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                'Authorization': `Bearer ${openAIApiKey}`
             },
             body: JSON.stringify({
-                model: 'text-davinci-003', // This is an example, use your model
-                prompt: prompt,
-                max_tokens: 150,
-            }),
+                model: "gpt-3.5-turbo",
+                messages: [{ role: "user", content: `Translate the following text to sign language gestures: "${text}"` }]
+            })
         });
 
-        const data = await response.json();
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('OpenAI API Error:', response.status, errorText);
+            throw new Error(`OpenAI API responded with status ${response.status}: ${errorText}`);
+        }
 
-        // This sends the result back to your front-end
+        const data = await response.json();
+        const translation = data.choices[0].message.content;
+
+        console.log('Translation successful.');
+
         return {
             statusCode: 200,
-            body: JSON.stringify(data),
+            body: JSON.stringify({ translation })
         };
+
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Function error:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Failed to fetch data from OpenAI.' }),
+            body: JSON.stringify({ error: 'Failed to process translation', details: error.message })
         };
     }
 };
