@@ -1,4 +1,4 @@
-
+console.log('Function started for debugging.');
 
 import fetch from 'node-fetch';
 
