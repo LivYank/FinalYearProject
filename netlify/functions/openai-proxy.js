@@ -3,7 +3,7 @@
 import fetch from 'node-fetch';
 
 exports.handler = async (event, context) => {
-    console.log('Function started for debugging.');
+    console.log('OpenAI API Key:', process.env.VITE_OPENAI_API_KEY ? 'Key found' : 'Key not found');
 
     if (event.httpMethod !== 'POST') {
         console.log('Invalid HTTP method.');
