@@ -1,12 +1,9 @@
-// netlify/functions/openai-proxy.js
+
 
 import fetch from 'node-fetch';
 
 exports.handler = async (event, context) => {
-    console.log('OpenAI API Key:', process.env.VITE_OPENAI_API_KEY ? 'Key found' : 'Key not found');
-
     if (event.httpMethod !== 'POST') {
-        console.log('Invalid HTTP method.');
         return {
             statusCode: 405,
             body: JSON.stringify({ error: 'Method Not Allowed' })
@@ -15,13 +12,12 @@ exports.handler = async (event, context) => {
 
     try {
         const body = JSON.parse(event.body);
-        const { text } = body;
+        const { messages, model } = body;
 
-        if (!text) {
-            console.log('Missing text in request body.');
+        if (!messages || messages.length === 0) {
             return {
                 statusCode: 400,
-                body: JSON.stringify({ error: 'Missing "text" in request body' })
+                body: JSON.stringify({ error: 'Missing "messages" in request body' })
             };
         }
 
@@ -34,8 +30,8 @@ exports.handler = async (event, context) => {
                 'Authorization': `Bearer ${openAIApiKey}`
             },
             body: JSON.stringify({
-                model: "gpt-3.5-turbo",
-                messages: [{ role: "user", content: `Translate the following text to sign language gestures: "${text}"` }]
+                model: model || "gpt-3.5-turbo",
+                messages: messages
             })
         });
 
@@ -46,13 +42,9 @@ exports.handler = async (event, context) => {
         }
 
         const data = await response.json();
-        const translation = data.choices[0].message.content;
-
-        console.log('Translation successful.');
-
         return {
             statusCode: 200,
-            body: JSON.stringify({ translation })
+            body: JSON.stringify(data)
         };
 
     } catch (error) {
