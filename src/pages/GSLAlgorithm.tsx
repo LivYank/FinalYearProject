@@ -10,6 +10,8 @@ const GSLAlgorithm = () => {
   const [orderedSigns, setOrderedSigns] = useState<string[]>([]);
   const [orderedWords, setOrderedWords] = useState<string[]>([]);
   const [gptTranslation, setGptTranslation] = useState("");
+  const [gptPOS, setGptPOS] = useState("");
+  const [gptSignInstructions, setGptSignInstructions] = useState<string[]>([]);
 
   const tokenize = (sentence: string) => {
     return sentence
@@ -102,47 +104,61 @@ const GSLAlgorithm = () => {
     setOrderedSigns(signs);
     setOrderedWords(wordOrder);
 
+    // GPT translation with dictionary and POS tagging
     try {
+      const tokens = tokenize(input);
+      const relevantEntries = Object.entries(dictionary).filter(([word]) =>
+        tokens.includes(word)
+      );
+
+      const dictionaryContent = relevantEntries
+        .map(([word, { sign, type }]) => `${word}: ${sign} (${type})`)
+        .join('\n') || "No relevant dictionary entries found.";
+
+      const prompt = `
+You are a Ghanaian Sign Language (GhSL) translator. Translate the English sentence into GhSL, adhering to the Time → Topic → Comment structure. Follow these grammar rules:
+1) WH-questions at end or start+end.
+2) Negation comes immediately after.
+3) Remove 'to be' verbs.
+4) Topicalization: topic before comment.
+5) Cause before effect.
+6) Real-time sequence.
+7) General to specific.
+8) Time at the beginning.
+
+Use dictionary below to translate known words. For unknown, use: Fingerspell: [WORD].
+
+GhSL Dictionary:
+${dictionaryContent}
+
+Input Sentence: ${input}
+Tokens with Part of Speech: (Provide your analysis here)
+Translated Sentence: 
+Sign Instructions: (List each word with its corresponding sign instruction)
+      `;
+
       const response = await fetch("/.netlify/functions/openai-proxy", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "gpt-3.5-turbo",
           messages: [
-            {
-              role: "system",
-              content: `You are a Ghanaian Sign Language (GhSL) translator. Translate any English sentence using these rules:
-
-1. Time → Topic → Comment order
-2. Topic-Comment: Topic first, then comment.
-3. Verb Tense: Use base verb, set tense using time indicators at the start.
-4. Negation: Place NOT/NEGATION after verb or item.
-5. WH-Questions: Place WH-word at end or both start/end.
-6. Cause-Effect: State cause before effect.
-7. Chronological Order: Sign events in sequence.
-8. General → Specific: Scene setting.
-9. Description: Adjective before noun.
-
-Examples:
-- "I went to the library yesterday" → "YESTERDAY LIBRARY I GO"
-- "What is your name?" → "YOUR NAME WHAT"
-- "I don’t have any pets" → "PET HAVE NOT"
-
-Translate this:
-            `,
-            },
-            {
-              role: "user",
-              content: input,
-            },
-          ],
-        }),
+            { role: "system", content: prompt },
+            { role: "user", content: "Proceed with the translation, part of speech analysis, and sign instructions." }
+          ]
+        })
       });
 
       const res = await response.json();
-      setGptTranslation(res.choices[0].message.content || "");
+      const fullContent: string = res.choices[0].message.content || "";
+
+      // Extract POS and Sign Instructions if possible
+      const posMatch = fullContent.match(/Tokens with Part of Speech:(.*?)Translated Sentence:/s);
+      const signMatch = fullContent.match(/Sign Instructions:(.*)/s);
+
+      setGptTranslation(fullContent);
+      setGptPOS(posMatch ? posMatch[1].trim() : "");
+      setGptSignInstructions(signMatch ? signMatch[1].trim().split("\n").filter(line => line.trim()) : []);
     } catch (error: any) {
       console.error("GPT Error:", error.message);
       setGptTranslation("Error fetching GPT translation.");
@@ -187,9 +203,27 @@ Translate this:
         {gptTranslation && (
           <div className="mt-6">
             <h2 className="text-xl font-semibold text-yellow-700">GPT-Assisted Translation</h2>
-            <p className="bg-yellow-100 p-3 rounded text-sm text-black">
+            <p className="bg-yellow-100 p-3 rounded text-sm text-black whitespace-pre-line">
               {gptTranslation}
             </p>
+
+            {gptPOS && (
+              <div className="mt-4 text-black">
+                <h3 className="font-semibold">Part of Speech Analysis:</h3>
+                <p className="bg-white p-2 rounded border">{gptPOS}</p>
+              </div>
+            )}
+
+            {gptSignInstructions.length > 0 && (
+              <div className="mt-4 text-black">
+                <h3 className="font-semibold">Sign Instructions:</h3>
+                <ol className="list-decimal ml-5">
+                  {gptSignInstructions.map((inst, idx) => (
+                    <li key={idx}>{inst}</li>
+                  ))}
+                </ol>
+              </div>
+            )}
           </div>
         )}
       </div>

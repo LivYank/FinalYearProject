@@ -2,12 +2,16 @@ import MainLayout from "@/components/ui/MainLayout";
 import { Link } from "react-router-dom";
 
 const categories = [
-  { title: "General hospital interactions", path: "/Medical/General" },
+  { title: "General Hospital Interactions", path: "/Medical/General" },
   { title: "Ophthalmology & Vision Care", path: "/Medical/Vision" },
   { title: "Prescriptions", path: "/Medical/Prescriptions" },
-  { title: "Medical emergencies", path: "/Medical/Emergency" },
-  { title: "Pharmacy interactions", path: "/Medical/Pharmacy" },
-  { title: "Treatment and diagnosis", path: "/Medical/Treatment" },
+  { title: "Medical Emergencies", path: "/Medical/Emergency" },
+  { title: "Pharmacy Interactions", path: "/Medical/Pharmacy" },
+  { title: "Treatment and Diagnosis", path: "/Medical/Treatment" },
+  { title: "Nursing/Patient Care", path: "/Medical/NursingCare" },
+  { title: "Common Symptons", path: "/Medical/CommonSymptons" },
+  { title: "Admin And Billing", path: "/Medical/Admin" },
+  { title: "ENT(Ear,Nose,Throat)", path: "/Medical/ENT" },
 ];
 
 const Medical = () => {

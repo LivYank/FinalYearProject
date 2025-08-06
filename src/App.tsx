@@ -17,6 +17,10 @@ import Prescriptions from './pages/Medical/Prescriptions';
 import Emergency from './pages/Medical/Emergency';
 import Pharmacy from './pages/Medical/Pharmacy';
 import Treatment from './pages/Medical/Treatment';
+import NursingCare from "./pages/Medical/NursingCare";
+import CommonSymptons from "./pages/Medical/CommonSymptons";
+import Admin from "./pages/Medical/Admin";
+import ENT from "./pages/Medical/ENT";
 import GSLAlgorithm from "./pages/GSLAlgorithm";
 import ISpeak from "./pages/iSPEAKDataset";
 import About from "./pages/About";
@@ -43,6 +47,10 @@ const App = () => (
           <Route path="/medical/emergency" element={<Emergency />} />
           <Route path="/medical/pharmacy" element={<Pharmacy />} />
           <Route path="/medical/treatment" element={<Treatment />} />
+          <Route path="/medical/NursingCare" element={<NursingCare />} />
+          <Route path="/medical/CommonSymptons" element={<CommonSymptons />} />
+          <Route path="/medical/Admin" element={<Admin />} />
+          <Route path="/medical/ENT" element={<ENT />} />
 
           {/* Other pages */}
           <Route path="/VideoPage/:id" element={<VideoPageSingle />} />
