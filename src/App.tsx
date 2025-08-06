@@ -10,7 +10,13 @@ import Home from "./pages/Home";
 import ASLTranslator from "./pages/ASLTranslator";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
-import Medical from "./pages/Medical";
+import Medical from './pages/Medical/Index';
+import General from './pages/Medical/General';
+import Vision from './pages/Medical/Vision';
+import Prescriptions from './pages/Medical/Prescriptions';
+import Emergency from './pages/Medical/Emergency';
+import Pharmacy from './pages/Medical/Pharmacy';
+import Treatment from './pages/Medical/Treatment';
 import GSLAlgorithm from "./pages/GSLAlgorithm";
 import ISpeak from "./pages/iSPEAKDataset";
 import About from "./pages/About";
@@ -28,7 +34,17 @@ const App = () => (
           <Route path="/home" element={<Home />} />
           <Route path="/asl-translator" element={<ASLTranslator />} />
           <Route path="/settings" element={<Settings />} />
+
+          {/* Medical main and subpages */}
           <Route path="/medical" element={<Medical />} />
+          <Route path="/medical/general" element={<General />} />
+          <Route path="/medical/vision" element={<Vision />} />
+          <Route path="/medical/prescriptions" element={<Prescriptions />} />
+          <Route path="/medical/emergency" element={<Emergency />} />
+          <Route path="/medical/pharmacy" element={<Pharmacy />} />
+          <Route path="/medical/treatment" element={<Treatment />} />
+
+          {/* Other pages */}
           <Route path="/VideoPage/:id" element={<VideoPageSingle />} />
           <Route path="/gsl-algorithm" element={<GSLAlgorithm />} />
           <Route path="/iSPEAK-Dataset" element={<ISpeak />} />
@@ -41,3 +57,4 @@ const App = () => (
 );
 
 export default App;
+

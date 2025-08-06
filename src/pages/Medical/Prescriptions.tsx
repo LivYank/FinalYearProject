@@ -1,46 +1,49 @@
-import MainLayout from "@/components/ui/MainLayout"; 
+import React, { useState } from "react";
+import MainLayout from "@/components/ui/MainLayout";
 
-const medicalSigns = [
-  { id: "1000A", description: "This light will feel bright but won’t harm you." },
-  { id: "1001D", description: "Take one tablet every morning with food." }, 
-  { id: "1002B", description: "This medication should be taken twice a day." }, 
-  { id: "1003D", description: "You will need to take these pills for 7 days." }, 
-  { id: "1004D", description: "Please take this medicine before meals." }, 
-  { id: "1005B", description: "This prescription is for a 30-day supply." }, 
-  { id: "1006D", description: "Ensure you complete the entire course of antibiotics." }, 
-  { id: "1007B", description: "Take one pill every 12 hours." }, 
-  { id: "1008D", description: "Follow the prescribed dosage and do not exceed it." }, 
-  { id: "1009B", description: "This is an over-the-counter medication; no prescription required." }, 
-  { id: "1010B", description: "This medication may cause drowsiness." }, 
-  { id: "1011D", description: "Take the medicine with plenty of water." }, 
-  { id: "1012B", description: "You should take these capsules after meals." }, 
-  { id: "1013D", description: "This medication can cause nausea, so take it with food." }, 
-  { id: "1014B", description: "This is a refill for your prescription." }, 
-  { id: "1015D", description: "Pick up your prescription from the pharmacy." }, 
-  { id: "1016B", description: "This medication will help control your blood sugar." }, 
-  { id: "1017D", description: "Store this medication in a cool, dry place." }, 
-  { id: "1018B", description: "Take one tablet each evening before bedtime." }, 
-  { id: "1019D", description: "This prescription is for pain relief." }, 
-  { id: "1020B", description: "The doctor has prescribed a topical cream." }, 
-  { id: "1021D", description: "Take this medication regularly for optimal results" }, 
-  { id: "1022B", description: "Your medication will be ready shortly at the pharmacy." }, 
-  { id: "1023D", description: "Store the medicine in the refrigerator." }, 
-  { id: "1024B", description: "This prescription is for your asthma inhaler." }, 
-  { id: "1025D", description: "Do not crush or chew these tablets." }, 
-  { id: "1026B", description: "Take the prescribed dosage at the same time daily." }, 
-  { id: "1027D", description: "Avoid alcohol while on this medication." }, 
-  { id: "1028B", description: "Take this medication with food to prevent stomach upset." }, 
-  { id: "1029D", description: "You need a new prescription for your eye drops." }, 
-  { id: "1030B", description: "This is a 90-day prescription supply." }, 
-  { id: "1031D", description: "An antibiotic has been prescribed for your infection." }, 
-  { id: "1032B", description: "Bring the empty bottle to refill your prescription." }, 
-  { id: "1033D", description: "This medication is for short-term use." }, 
-  { id: "1034B", description: "Take these pills on an empty stomach." }, 
-  { id: "1035D", description: "Avoid taking this medication if pregnant." }, 
-  { id: "1036B", description: "Take one pill every 8 hours as directed." }, 
-  { id: "1037D", description: "Your doctor has written a prescription for a steroid cream." }, 
-  { id: "1038B", description: "This prescription is for your high blood pressure." }, 
-  { id: "1039D", description: "This medication will reduce your cholesterol." }, 
+const Prescriptions = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+const prescriptionsVideos = [
+  { id: "1001D", description: "Take one tablet every morning with food." },
+  { id: "1002B", description: "This medication should be taken twice a day." },
+  { id: "1003D", description: "You will need to take these pills for 7 days." },
+  { id: "1004D", description: "Please take this medicine before meals." },
+  { id: "1005B", description: "This prescription is for a 30-day supply." },
+  { id: "1006D", description: "Ensure you complete the entire course of antibiotics." },
+  { id: "1007B", description: "Take one pill every 12 hours." },
+  { id: "1008D", description: "Follow the prescribed dosage and do not exceed it." },
+  { id: "1009B", description: "This is an over-the-counter medication; no prescription required." },
+  { id: "1010B", description: "This medication may cause drowsiness." },
+  { id: "1011D", description: "Take the medicine with plenty of water." },
+  { id: "1012B", description: "You should take these capsules after meals." },
+  { id: "1013D", description: "This medication can cause nausea, so take it with food." },
+  { id: "1014B", description: "This is a refill for your prescription." },
+  { id: "1015D", description: "Pick up your prescription from the pharmacy." },
+  { id: "1016B", description: "This medication will help control your blood sugar." },
+  { id: "1017D", description: "Store this medication in a cool, dry place." },
+  { id: "1018B", description: "Take one tablet each evening before bedtime." },
+  { id: "1019D", description: "This prescription is for pain relief." },
+  { id: "1020B", description: "The doctor has prescribed a topical cream." },
+  { id: "1021D", description: "Take this medication regularly for optimal results" },
+  { id: "1022B", description: "Your medication will be ready shortly at the pharmacy." },
+  { id: "1023D", description: "Store the medicine in the refrigerator." },
+  { id: "1024B", description: "This prescription is for your asthma inhaler." },
+  { id: "1025D", description: "Do not crush or chew these tablets." },
+  { id: "1026B", description: "Take the prescribed dosage at the same time daily." },
+  { id: "1027D", description: "Avoid alcohol while on this medication." },
+  { id: "1028B", description: "Take this medication with food to prevent stomach upset." },
+  { id: "1029D", description: "You need a new prescription for your eye drops." },
+  { id: "1030B", description: "This is a 90-day prescription supply." },
+  { id: "1031D", description: "An antibiotic has been prescribed for your infection." },
+  { id: "1032B", description: "Bring the empty bottle to refill your prescription." },
+  { id: "1033D", description: "This medication is for short-term use." },
+  { id: "1034B", description: "Take these pills on an empty stomach." },
+  { id: "1035D", description: "Avoid taking this medication if pregnant." },
+  { id: "1036B", description: "Take one pill every 8 hours as directed." },
+  { id: "1037D", description: "Your doctor has written a prescription for a steroid cream." },
+  { id: "1038B", description: "This prescription is for your high blood pressure." },
+  { id: "1039D", description: "This medication will reduce your cholesterol." },
   { id: "1040B", description: "Take this medication for at least two weeks.." },
   { id: "1041D", description: "An antiviral has been prescribed for your symptoms." },
   { id: "1042B", description: "Follow the dosage instructions carefully." },
@@ -101,40 +104,42 @@ const medicalSigns = [
   { id: "1097B", description: "A painkiller has been prescribed for chronic pain." },
   { id: "1098D", description: "Drink plenty of water to avoid dehydration." },
   { id: "1099B", description: "Eat oranges if tablets run out." },
-
-  { id: "10A", description: "Can I get directions to the lab?" },
-  { id: "100A", description: "Is there a patient recovery room?" }, 
-  { id: "101A", description: "Can I get a copy of my test results?" }, 
-  { id: "102A", description: "Where is the nearest laundry?" }, 
-  { id: "103A", description: "Is there a patient rehabilitation center?" },
-  { id: "104A", description: "Please take a seat." },
-  { id: "105A", description: "Walk to the far end." },
-  { id: "106A", description: "Is there any queit room?" },
-  { id: "107A", description: "The security guard is at the entrance" },
-  { id: "108A", description: "Please follow the nurse to the examination room." },
-  { id: "109A", description: "You can wait here until we are ready for you." }, 
-  
 ];
 
-const Medical = () => {
+const filteredVideos = prescriptionsVideos.filter((video) =>
+    video.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <MainLayout>
-      <div className="p-4 space-y-4">
-        <h1 className="text-xl font-bold mb-4">Medical Signs</h1>
-        {medicalSigns.map((sign) => (
-          <a
-            key={sign.id}
-            href={`/VideoPage/${sign.id}`} 
-            className="block cursor-pointer border rounded-xl p-4 hover:shadow-md transition"
->
-            <h2 className="text-lg font-semibold">{sign.description}</h2>
-          </a>
+      <div className="p-4 space-y-4 bg-[#fdfaf6] min-h-screen">
+        <h1 className="text-xl font-bold text-[#1a1a1a] mb-4 border-l-4 border-[#fcd34d] pl-3">
+          Prescription Videos
+        </h1>
 
-        ))}
+        <input
+          type="text"
+          placeholder="Search videos..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full p-2 border border-[#ffd54f] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#43a047] bg-white"
+        />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {filteredVideos.map((video) => (
+            <a
+              key={video.id}
+              href={`/VideoPage/${video.id}`}
+              className="block border rounded-xl p-4 bg-yellow-100 hover:scale-[1.01]"
+              >
+            <h2 className="text-lg font-semibold text-black">{video.description}</h2>
+            </a>
+
+          ))}
+        </div>
       </div>
     </MainLayout>
   );
 };
 
-export default Medical;
-
+export default Prescriptions;
