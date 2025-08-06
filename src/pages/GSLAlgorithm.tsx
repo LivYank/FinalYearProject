@@ -183,6 +183,7 @@ Sign Instructions: (List each word with its corresponding sign instruction)
           Translate
         </button>
 
+        {/*
         {orderedWords.length > 0 && (
           <div className="mt-6">
             <h2 className="text-xl font-semibold text-green-700">Manual Translation</h2>
@@ -199,6 +200,7 @@ Sign Instructions: (List each word with its corresponding sign instruction)
             </div>
           </div>
         )}
+        */}
 
         {gptTranslation && (
           <div className="mt-6">
