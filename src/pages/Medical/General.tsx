@@ -25,7 +25,7 @@ const generalVideos = [
   { id: "7", description: "What floor is the pediatric ward on?" },
   { id: "8", description: "Please take a seat in the waiting room." },
   { id: "9", description: "Do you have your health insurance card?" },
-  { id: "10A", description: "Can I get directions to the lab?" },
+  { id: "10", description: "Can I get directions to the lab?" },
   { id: "11", description: "I am here to visit a patient." },
   { id: "12", description: "What are the visiting hours?" },
   { id: "13", description: "Can I see the doctor now?" },
