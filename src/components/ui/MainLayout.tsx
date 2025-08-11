@@ -16,6 +16,29 @@ const MainLayout = React.forwardRef<
 >(({ className, children, ...props }, ref) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [showNav, setShowNav] = React.useState(true);
+  const lastScrollY = React.useRef(0);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY.current + 5) {
+        // Scrolling down → hide nav
+        setShowNav(false);
+      } else if (currentScrollY < lastScrollY.current - 5) {
+        // Scrolling up → show nav
+        setShowNav(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <div
@@ -27,7 +50,12 @@ const MainLayout = React.forwardRef<
       <div className="flex-grow">{children}</div>
 
       {/* Fixed bottom navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around items-center h-16 shadow-md z-10">
+      <nav
+        className={cn(
+          "fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around items-center h-16 shadow-md z-10 transition-transform duration-300",
+          showNav ? "translate-y-0" : "translate-y-full"
+        )}
+      >
         {tabs.map((tab) => (
           <button
             key={tab.path}
